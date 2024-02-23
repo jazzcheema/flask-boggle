@@ -23,7 +23,7 @@ class BoggleAppTestCase(TestCase):
         with app.test_client() as client:
             response = client.get('/')
             html = response.get_data(as_text = True)
-
+            #TODO: could add comment to test for html
             self.assertEqual(response.status_code, 200)
             self.assertIn("<title>Boggle</title>", html)
 
