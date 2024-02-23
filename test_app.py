@@ -2,6 +2,8 @@ from unittest import TestCase
 
 from app import app, games
 
+import pdb
+
 # Make Flask errors be real errors, not HTML pages with error info
 app.config['TESTING'] = True
 
@@ -34,14 +36,13 @@ class BoggleAppTestCase(TestCase):
 
             response = client.post('/api/new-game')
             resp_body = response.get_json()
-            response.get_data(as_text=True)
-            # type(resp_body['game_id']) is type('')
-            # type(resp_body['board']) is type([])
-            print('response.get_data*********', response.get_data)
-            print('response******', response)
-            print('response body**************', resp_body)
-            print('games************', games)
-            ...
+
+            game_id = resp_body["gameId"]
+            board = resp_body["board"]
+
+            self.assertTrue(type(game_id) is str)
+            self.assertTrue(type(board) is list)
+            self.assertIn(game_id, games.keys())
 
             # make a post request to /api/new-game
             # get the response body as json using .get_json()
