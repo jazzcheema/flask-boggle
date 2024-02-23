@@ -1,5 +1,6 @@
 from flask import Flask, request, render_template, jsonify
 from uuid import uuid4
+import pdb
 
 from boggle import BoggleGame
 
@@ -32,4 +33,6 @@ def new_game():
     game = BoggleGame()
     games[game_id] = game
 
-    return None   # FIXME
+    json_string = {'gameId': game_id, 'board': game.board}
+    print('this is a json test', jsonify(json_string))
+    return jsonify(json_string)

@@ -22,8 +22,8 @@ class BoggleAppTestCase(TestCase):
 
         with app.test_client() as client:
             response = client.get('/')
-            html = response.get_data(as_text = True)
-            #TODO: could add comment to test for html
+            html = response.get_data(as_text=True)
+            # TODO: could add comment to test for html
             self.assertEqual(response.status_code, 200)
             self.assertIn("<title>Boggle</title>", html)
 
@@ -31,7 +31,18 @@ class BoggleAppTestCase(TestCase):
         """Test starting a new game."""
 
         with app.test_client() as client:
+
+            response = client.post('/api/new-game')
+            resp_body = response.get_json()
+            response.get_data(as_text=True)
+            # type(resp_body['game_id']) is type('')
+            # type(resp_body['board']) is type([])
+            print('response.get_data*********', response.get_data)
+            print('response******', response)
+            print('response body**************', resp_body)
+            print('games************', games)
             ...
+
             # make a post request to /api/new-game
             # get the response body as json using .get_json()
             # test that the game_id is a string
