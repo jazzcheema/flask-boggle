@@ -1,6 +1,6 @@
 from flask import Flask, request, render_template, jsonify
 from uuid import uuid4
-import pdb
+
 
 from boggle import BoggleGame
 
@@ -33,13 +33,24 @@ def new_game():
     game = BoggleGame()
     games[game_id] = game
 
-    json_string = {'gameId': game_id, 'board': game.board}
-
-    return jsonify(json_string)
+    # TODO: better name for below.. not a string yet..
+    return jsonify({'gameId': game_id, 'board': game.board})
 
 
 @app.post("/api/score-word")
 def score_word():
+    """Takes in a Word and ID from game instance and checks if word is valid and
+    present on current board--> returns a json string.
+
+   JSON BODY: {
+       "word": "ZOO",
+       "gameId": "asdasd-asdsdas-...."
+    }
+
+    Returns: JSON of {
+       "result": "ok"
+    }
+    """
 
     word = request.json["word"]
     id = request.json["gameId"]
@@ -51,4 +62,3 @@ def score_word():
         return jsonify({"result": "not-on-board"})
 
     return jsonify({"result": "ok"})
-

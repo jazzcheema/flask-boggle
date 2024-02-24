@@ -2,7 +2,6 @@ from unittest import TestCase
 
 from app import app, games
 
-import pdb
 
 # Make Flask errors be real errors, not HTML pages with error info
 app.config['TESTING'] = True
@@ -25,9 +24,9 @@ class BoggleAppTestCase(TestCase):
         with app.test_client() as client:
             response = client.get('/')
             html = response.get_data(as_text=True)
-            # TODO: could add comment to test for html
+
             self.assertEqual(response.status_code, 200)
-            self.assertIn("<title>Boggle</title>", html)
+            self.assertIn("<!-- game_page -->", html)
 
     def test_api_new_game(self):
         """Test starting a new game."""
@@ -39,22 +38,68 @@ class BoggleAppTestCase(TestCase):
 
             game_id = resp_body["gameId"]
             board = resp_body["board"]
-
+            # FIXME: assert is instance below
             self.assertTrue(type(game_id) is str)
             self.assertTrue(type(board) is list)
             self.assertIn(game_id, games.keys())
+            self.assertEqual({'gameId': game_id,
+                              'board': board}, resp_body)
 
             # make a post request to /api/new-game
             # get the response body as json using .get_json()
             # test that the game_id is a string
             # test that the board is a list
-            # test that the game_id is in the dictionary of games (imported from app.py above)
+            # test that the game_id is in the dictionary of games
+            # (imported from app.py above)
 
     def test_score_word(self):
         """Test if word is valid"""
 
         with app.test_client() as client:
-            ...
+
+            resp = client.post('/api/new-game')
+            resp_body = resp.get_json()
+            game_id = resp_body['gameId']
+            game = games[game_id]
+            game.board[0] = ['G', 'B', 'O', 'L', 'K']
+            game.board[1] = ['G', 'A', 'O', 'L', 'K']
+            game.board[2] = ['G', 'A', 'O', 'H', 'K']
+            game.board[3] = ['G', 'A', 'F', 'L', 'K']
+            game.board[4] = ['G', 'I', 'R', 'L', 'K']
+
+            resp = client.post(
+                '/api/score-word',
+                json={
+                    'word': 'GIRL',
+                    'gameId': game_id
+                }
+            )
+            data = resp.get_json()
+
+            self.assertEqual({'result': 'ok'}, data)
+
+            resp = client.post(
+                '/api/score-word',
+                json={
+                    'word': 'ZEBRA',
+                    'gameId': game_id
+                }
+            )
+            data = resp.get_json()
+
+            self.assertEqual({'result': 'not-on-board'}, data)
+
+            resp = client.post(
+                '/api/score-word',
+                json={
+                    'word': 'ZXILO',
+                    'gameId': game_id
+                }
+            )
+            data = resp.get_json()
+
+            self.assertEqual({'result': 'not-word'}, data)
+
             # make a post request to /api/new-game
             # get the response body as json using .get_json()
             # find that game in the dictionary of games (imported from app.py above)
