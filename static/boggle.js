@@ -29,27 +29,39 @@ function displayBoard(board) {
   $table.empty();
   $table.append("<tbody>");
 
-  for(let row = 0; row < board.length; row++) {
-    const $row = $("<tr>", { id : `row-${row}`})
-    $("tbody").append($row)
+  for (let row = 0; row < board.length; row++) {
+    const $row = $("<tr>", { id: `row-${row}` });
+    $("tbody").append($row);
 
-    for(let col = 0; col < board[row].length; col++) {
-      const $letter = $("<td>", {text : board[row][col]})
-      $row.append($letter)
+    for (let col = 0; col < board[row].length; col++) {
+      const $letter = $("<td>", { text: board[row][col] });
+      $row.append($letter);
     }
   }
 }
 
+
+
 async function handleWordForm(evt) {
-  evt.preventDefault()
+  evt.preventDefault();
   const word = $wordInput.val().toUpperCase();
-  console.log(await checkIfValidWord(word))
+
+  const checkResult = await checkIfValidWord(word);
+  if (checkResult.result !== 'ok') {
+    $('.msg').text(checkResult.result);
+  } else if (checkResult.result === 'ok') {
+    const $wordLi = $('<li>');
+    $wordLi.text(word);
+    $('#words').append($wordLi);
+  }
 }
+
+
 
 async function checkIfValidWord(word) {
   const response = await fetch(`/api/score-word`, {
     method: "POST",
-    body: JSON.stringify({word, gameId}),
+    body: JSON.stringify({ word, gameId }),
     headers: {
       "Content-Type": "application/json"
     }
@@ -57,7 +69,7 @@ async function checkIfValidWord(word) {
   return await response.json();
 }
 
-$form.on("submit", handleWordForm)
+$form.on("submit", handleWordForm);
 
 
 
