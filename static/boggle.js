@@ -26,9 +26,41 @@ async function start() {
 /** Display board */
 
 function displayBoard(board) {
-  // $table.empty();
-  // loop over board and create the DOM tr/td structure
+  $table.empty();
+  $table.append("<tbody>");
+
+  for(let row = 0; row < board.length; row++) {
+    const $row = $("<tr>", { id : `row-${row}`})
+    $("tbody").append($row)
+
+    for(let col = 0; col < board[row].length; col++) {
+      const $letter = $("<td>", {text : board[row][col]})
+      $row.append($letter)
+    }
+  }
 }
+
+async function handleWordForm(evt) {
+  evt.preventDefault()
+  const word = $wordInput.val().toUpperCase();
+  console.log(await checkIfValidWord(word))
+}
+
+async function checkIfValidWord(word) {
+  const response = await fetch(`/api/score-word`, {
+    method: "POST",
+    body: JSON.stringify({word, gameId}),
+    headers: {
+      "Content-Type": "application/json"
+    }
+  });
+  return await response.json();
+}
+
+$form.on("submit", handleWordForm)
+
+
+
 
 
 start();

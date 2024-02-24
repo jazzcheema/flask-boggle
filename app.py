@@ -33,16 +33,15 @@ def new_game():
     game = BoggleGame()
     games[game_id] = game
 
-    # TODO: better name for below.. not a string yet..
     return jsonify({'gameId': game_id, 'board': game.board})
 
 
 @app.post("/api/score-word")
 def score_word():
     """Takes in a Word and ID from game instance and checks if word is valid and
-    present on current board--> returns a json string.
+    present on current board
 
-   JSON BODY: {
+    JSON BODY: {
        "word": "ZOO",
        "gameId": "asdasd-asdsdas-...."
     }

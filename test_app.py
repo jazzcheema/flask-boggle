@@ -38,9 +38,8 @@ class BoggleAppTestCase(TestCase):
 
             game_id = resp_body["gameId"]
             board = resp_body["board"]
-            # FIXME: assert is instance below
-            self.assertTrue(type(game_id) is str)
-            self.assertTrue(type(board) is list)
+            self.assertIsInstance(game_id, str)
+            self.assertIsInstance(board, list)
             self.assertIn(game_id, games.keys())
             self.assertEqual({'gameId': game_id,
                               'board': board}, resp_body)
